@@ -120,7 +120,10 @@ function buildDynamicElements() {
 
     g.addEventListener('click', () => handlePlayerClick(player.id));
     g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') handlePlayerClick(player.id);
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); // prevent Space from scrolling the page
+        handlePlayerClick(player.id);
+      }
     });
 
     svg.appendChild(g);
@@ -159,7 +162,7 @@ function newRound() {
   // Reset all player styles
   PLAYERS.forEach(p => {
     const g = document.getElementById(`player-${p.id}`);
-    if (g) g.className.baseVal = 'player-group'; // remove correct/wrong/disabled
+    if (g) g.setAttribute('class', 'player-group'); // remove correct/wrong/disabled
   });
 
   // Pick a random player and a random ball position in their zone

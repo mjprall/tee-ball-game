@@ -202,6 +202,9 @@ h1 {
   stroke-width: 2;
   filter: drop-shadow(0 0 5px rgba(231, 76, 60, 0.7));
   animation: pulse-base 1s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(2);
 }
 
 .base-group.selectable:hover .base-shape,

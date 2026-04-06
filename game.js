@@ -131,22 +131,34 @@ function buildDynamicElements() {
 }
 
 // ───────────────────────────────────────────────────────────────
-// Build base-selection buttons
+// Attach click / keyboard handlers to SVG base elements
 // ───────────────────────────────────────────────────────────────
-function buildBaseButtons() {
-  const container = document.getElementById('base-buttons');
-  [
-    { id: '1st',  label: '🟫 1st Base'   },
-    { id: '2nd',  label: '🟫 2nd Base'   },
-    { id: '3rd',  label: '🟫 3rd Base'   },
-    { id: 'home', label: '🏠 Home Plate' },
-  ].forEach(({ id, label }) => {
-    const btn = document.createElement('button');
-    btn.className = 'base-btn';
-    btn.textContent = label;
-    btn.dataset.base = id;
-    btn.addEventListener('click', () => handleBaseClick(id));
-    container.appendChild(btn);
+function buildBaseElements() {
+  ['1st', '2nd', '3rd', 'home'].forEach(id => {
+    const g = document.getElementById(`base-${id}`);
+    if (!g) return;
+    g.addEventListener('click', () => handleBaseClick(id));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleBaseClick(id);
+      }
+    });
+  });
+}
+
+// Toggle the selectable (red / interactive) state of all SVG bases
+function setBasesSelectable(selectable) {
+  ['1st', '2nd', '3rd', 'home'].forEach(id => {
+    const g = document.getElementById(`base-${id}`);
+    if (!g) return;
+    if (selectable) {
+      g.classList.add('selectable');
+      g.setAttribute('tabindex', '0');
+    } else {
+      g.classList.remove('selectable', 'correct', 'wrong');
+      g.setAttribute('tabindex', '-1');
+    }
   });
 }
 
@@ -178,7 +190,7 @@ function newRound() {
   placeBall(bx, by, true);
   setMessage('Tap the player who should field the ball! ⚾', 'info');
 
-  document.getElementById('base-buttons').style.display = 'none';
+  setBasesSelectable(false);
   document.getElementById('next-wrap').style.display = 'none';
 }
 
@@ -219,7 +231,7 @@ function handlePlayerClick(playerID) {
       'success',
     );
 
-    document.getElementById('base-buttons').style.display = 'flex';
+    setBasesSelectable(true);
   } else {
     // ❌ Wrong fielder – shake then reset colour
     g.classList.add('wrong');
@@ -247,14 +259,23 @@ function handleBaseClick(base) {
     ];
     setMessage(messages[Math.floor(Math.random() * messages.length)], 'success');
 
+    // Highlight the correct base green, then clear selectable state
+    setBasesSelectable(false);
+    const correctEl = document.getElementById(`base-${base}`);
+    if (correctEl) correctEl.classList.add('correct');
+
     placeBall(0, 0, false);
-    document.getElementById('base-buttons').style.display = 'none';
     document.getElementById('next-wrap').style.display = 'flex';
 
     // Auto-advance after 3 seconds
     state.autoTimer = setTimeout(() => newRound(), 3000);
   } else {
-    // ❌ Wrong base
+    // ❌ Wrong base – flash and allow retry
+    const wrongEl = document.getElementById(`base-${base}`);
+    if (wrongEl) {
+      wrongEl.classList.add('wrong');
+      setTimeout(() => wrongEl.classList.remove('wrong'), 500);
+    }
     setMessage('Not quite – try a different base! 🤔', 'error');
   }
 }
@@ -273,6 +294,6 @@ function setMessage(text, type) {
 // ───────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   buildDynamicElements();
-  buildBaseButtons();
+  buildBaseElements();
   newRound();
 });

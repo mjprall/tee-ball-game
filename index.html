@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tee Ball Learning Game ⚾</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game">
+
+    <header>
+      <h1>⚾ Tee Ball Game!</h1>
+      <div id="score-bar">
+        <span class="score-label">Score:</span>
+        <span id="score-value" class="score-badge">0</span>
+      </div>
+    </header>
+
+    <!-- Status / instruction message -->
+    <div id="message-box" class="info" role="status" aria-live="polite">
+      <p id="message-text">Loading…</p>
+    </div>
+
+    <!-- Top-down field (SVG) -->
+    <div id="field-container">
+      <svg id="field-svg"
+           viewBox="0 0 400 440"
+           xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="Top-down tee-ball field">
+
+        <!-- ── Background / foul territory ── -->
+        <rect width="400" height="440" fill="#b8c898" />
+
+        <!-- ── Fair territory – outfield grass ── -->
+        <path d="M 200,362 L 0,162 Q 200,15 400,162 Z" fill="#4a8c3f" />
+
+        <!-- ── Infield dirt (diamond) ── -->
+        <polygon points="200,138 312,250 200,362 88,250" fill="#c4935a" />
+
+        <!-- ── Infield grass circle (around mound) ── -->
+        <circle cx="200" cy="250" r="62" fill="#5a9c4a" />
+
+        <!-- ── Baselines ── -->
+        <line x1="200" y1="362" x2="312" y2="250" stroke="white" stroke-width="2" opacity="0.6"/>
+        <line x1="200" y1="362" x2="88"  y2="250" stroke="white" stroke-width="2" opacity="0.6"/>
+        <line x1="312" y1="250" x2="200" y2="138" stroke="white" stroke-width="2" opacity="0.6"/>
+        <line x1="88"  y1="250" x2="200" y2="138" stroke="white" stroke-width="2" opacity="0.6"/>
+
+        <!-- ── Extended foul lines (dashed) ── -->
+        <line x1="88"  y1="250" x2="0"   y2="162"
+              stroke="white" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.45"/>
+        <line x1="312" y1="250" x2="400" y2="162"
+              stroke="white" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.45"/>
+
+        <!-- ── Pitcher's mound ── -->
+        <circle cx="200" cy="250" r="15"
+                fill="#c4935a" stroke="#a07030" stroke-width="2" />
+
+        <!-- ── Bases ── -->
+        <!-- 2nd base  (centred at 200,138) -->
+        <rect x="193" y="131" width="14" height="14" rx="2"
+              fill="white" stroke="#bbb" stroke-width="1" />
+        <!-- 1st base  (centred at 312,250) -->
+        <rect x="305" y="243" width="14" height="14" rx="2"
+              fill="white" stroke="#bbb" stroke-width="1" />
+        <!-- 3rd base  (centred at 88,250) -->
+        <rect x="81"  y="243" width="14" height="14" rx="2"
+              fill="white" stroke="#bbb" stroke-width="1" />
+        <!-- Home plate (pentagon) -->
+        <polygon points="196,368 204,368 209,361 200,356 191,361"
+                 fill="white" stroke="#bbb" stroke-width="1" />
+
+        <!-- ── Base labels ── -->
+        <text x="200" y="125"  text-anchor="middle" font-size="11"
+              fill="white" font-weight="bold" font-family="Arial,sans-serif">2nd</text>
+        <text x="328" y="254"  text-anchor="start"  font-size="11"
+              fill="white" font-weight="bold" font-family="Arial,sans-serif">1st</text>
+        <text x="72"  y="254"  text-anchor="end"    font-size="11"
+              fill="white" font-weight="bold" font-family="Arial,sans-serif">3rd</text>
+        <text x="200" y="435"  text-anchor="middle" font-size="11"
+              fill="#444"  font-weight="bold" font-family="Arial,sans-serif">Home</text>
+
+        <!-- ── Ball and player circles are injected by game.js ── -->
+      </svg>
+    </div>
+
+    <!-- Base-selection buttons (hidden until throw phase) -->
+    <div id="base-buttons" aria-label="Choose a base to throw to">
+      <!-- Populated by game.js -->
+    </div>
+
+    <!-- "Next ball" button (shown during celebrate phase) -->
+    <div id="next-wrap">
+      <button id="next-btn" onclick="nextRound()">Next Ball ➜</button>
+    </div>
+
+  </div><!-- /#game -->
+
+  <script src="game.js"></script>
+</body>
+</html>
